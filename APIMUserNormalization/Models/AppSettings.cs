@@ -20,12 +20,23 @@ namespace APIMUserNormalization.Models
             builder.AddAzureAppConfiguration("Endpoint=https://apimb2cconf.azconfig.io;Id=yk8O-l6-s0:2fwdKxcKM8kBaR0Wh85v;Secret=ELiblmcJWMpyPCSb52AWeJC5veAePsBKKrHerNRKQO0=");
 
             Configuration = builder.Build();
-            return Configuration.Get<AppSettings>();
+            var appSet = Configuration.Get<AppSettings>();
+            
+
+            return appSet;
         }
     }
 
     public class AppSettings
     {
+        
+
+
+        [JsonProperty(PropertyName = "TableConnection")]
+        public string TableConnection { get; set; }
+
+        [JsonProperty(PropertyName = "MigrationEnabled")]
+        public bool MigrationEnabled { get; set; }
 
         [JsonProperty(PropertyName = "AADB2CTenantId")]
         public string AADB2CTenantId { get; set; }

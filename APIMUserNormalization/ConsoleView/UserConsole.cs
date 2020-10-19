@@ -32,6 +32,11 @@ namespace APIMUserNormalization.ConsoleView
         }
         public async Task<bool> PrintMainMenu()
         {
+
+            //var ats = new AzureTableService("DefaultEndpointsProtocol=https;AccountName=apimattstorage;AccountKey=MYRxQk2IUffGfQjHm3f2yyPePmb/CyJYU4VgZTtxUqpP1/IICaIeCatGwqC0dSm0UeodqRhqjKda7GFGiht9LA==;EndpointSuffix=core.windows.net", "accountsLog");
+            //ats.WriteSuccessEnablement("podmtyapimb2c", "october19@iqextreme.com", "props", "DevCenter2020!", true);
+
+
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
             Console.WriteLine("API Management and AD B2C Environments list:");
@@ -65,6 +70,7 @@ namespace APIMUserNormalization.ConsoleView
                 case "A":
                     Console.WriteLine("This process will take some time, please wait...");
                     await migrationService.SetupUserCollections();
+                    //migrationService.PrintUserNormalizationStatus();
                     userSetup = true;
                     Console.WriteLine("Done...");
                     break;
@@ -112,7 +118,7 @@ namespace APIMUserNormalization.ConsoleView
 
             log.Info("User Email: " + un.Email);
 
-            Console.Write("    Is user normilized?: ");
+            Console.Write("    Is user normalized?: ");
             if (!un.IsNormilized)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -143,6 +149,10 @@ namespace APIMUserNormalization.ConsoleView
             if (yn.ToUpper().Equals("Y"))
             {
                 log.Info("Normalize User selected!");
+
+                //ALB: dummy function to create fake users 
+                //await migrationService.Create100APIMUsers(un);
+
                 await migrationService.NormalizeUserAsync(un);
             }
 

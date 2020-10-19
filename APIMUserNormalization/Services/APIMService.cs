@@ -89,7 +89,24 @@ namespace APIMUserNormalization.Services
 
         public async Task<UserCollection> GetUsersFromAPIM()
         {
+            string oldNextLink = "";
             UserCollection users = await GetApiManagementUsersAsync(APIMSubscriptionId, APIMResourceGroup, APIMServiceName);
+            while (users.nextLink != null)
+            {
+                if (oldNextLink == users.nextLink)
+                { 
+                    break;
+                }
+                // since the request is limited to 100 users, this will get the next list of users and add them.
+                UserCollection nextUsers = await GetApiManagementUsersAsync(APIMSubscriptionId, APIMResourceGroup, APIMServiceName, users.nextLink);
+                foreach (var user in nextUsers.value)
+                { 
+                    users.AddUserContract(user);
+                }
+
+                oldNextLink = users.nextLink;
+            }
+            
             return users;
 
         }
@@ -224,10 +241,17 @@ namespace APIMUserNormalization.Services
         }
 
 
-        private async Task<UserCollection> GetApiManagementUsersAsync(string subscriptionId, string resourceGroup, string apiManagementName)
+        private async Task<UserCollection> GetApiManagementUsersAsync(string subscriptionId, string resourceGroup, string apiManagementName, string nextLink = "")
         {
+            var responseValue = "";
+            var urlEnd = "";
+            if (nextLink != "")
+            {
+                urlEnd = nextLink.Substring(nextLink.IndexOf("2019-01-01") + 10);
+            }
 
-            var responseValue = await ExecuteGetRequest("https://management.azure.com/subscriptions/", subscriptionId, resourceGroup, apiManagementName, "/users", "?api-version=2019-01-01");
+            responseValue = await ExecuteGetRequest("https://management.azure.com/subscriptions/", subscriptionId, resourceGroup, apiManagementName, "/users", "?api-version=2019-01-01" + urlEnd);
+            
             if (responseValue != null && !responseValue.Equals(string.Empty))
             {
                 UserCollection users = System.Text.Json.JsonSerializer.Deserialize<UserCollection>(responseValue);
@@ -235,6 +259,7 @@ namespace APIMUserNormalization.Services
                 {
                     GroupContractCollection groups = await GerUserGroups(subscriptionId, resourceGroup, apiManagementName, user.Id);
                     user.Properties.Groups = groups;
+                    user.sourceAPIM = apiManagementName;
                 }
                 return users;
             }
