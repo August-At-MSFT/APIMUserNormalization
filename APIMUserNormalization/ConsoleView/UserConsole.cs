@@ -33,9 +33,6 @@ namespace APIMUserNormalization.ConsoleView
         public async Task<bool> PrintMainMenu()
         {
 
-            //var ats = new AzureTableService("DefaultEndpointsProtocol=https;AccountName=apimattstorage;AccountKey=MYRxQk2IUffGfQjHm3f2yyPePmb/CyJYU4VgZTtxUqpP1/IICaIeCatGwqC0dSm0UeodqRhqjKda7GFGiht9LA==;EndpointSuffix=core.windows.net", "accountsLog");
-            //ats.WriteSuccessEnablement("podmtyapimb2c", "october19@iqextreme.com", "props", "DevCenter2020!", true);
-
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
